@@ -1,4 +1,4 @@
-$(document).ready(function() {
+ready = function() {
     var notesData = null;
 
     $.ajax({
@@ -9,13 +9,18 @@ $(document).ready(function() {
     });
 
    populateNotesData(notesData);
-});
+};
+
+$(document).ready(ready);
+$(document).on('page:load', ready);
 
 populateNotesData = function (data) {
     var interestRates = {};
     var loanAmounts = {};
     var grades = {};
     var paymentsReceived = {};
+    var defaultsByGrade = {};
+    var defaultedDollarsByGrade = {};
 
     var notesDataTableApi = $("#notesDataTable").dataTable().api();
     notesDataTableApi.rows().remove();
@@ -35,14 +40,21 @@ populateNotesData = function (data) {
         var paymentReceived = value["paymentsReceived"];
         paymentsReceived[paymentReceived] = paymentReceived in paymentsReceived ? ++paymentsReceived[paymentReceived] : 1;
 
+        var status = value["loanStatus"];
+        if(status === "Charged Off") {
+            defaultsByGrade[grade] = grade in defaultsByGrade ? ++defaultsByGrade[grade] : 1;
+            var defaultedDollars = value["noteAmount"] - value["paymentsReceived"];
+            defaultedDollarsByGrade[grade] = grade in defaultedDollarsByGrade ? defaultedDollarsByGrade[grade] + defaultedDollars : defaultedDollars;
+        }
+
         var issueDate = new Date(value["issueDate"]);
         var issueDateString = (issueDate.getMonth() + 1) + "/" + issueDate.getDate() + "/" + issueDate.getFullYear();
 
         var orderDate = new Date(value["orderDate"]);
         var orderDateString = (orderDate.getMonth() + 1) + "/" + orderDate.getDate() + "/" + orderDate.getFullYear();
 
-        issueDateString = notIssuedStatuses.indexOf(value["loanStatus"]) != -1 ? "Not Yet Issued" : issueDateString;
-        orderDateString = notIssuedStatuses.indexOf(value["loanStatus"]) != -1 ? "Not Yet Issued" : orderDateString;
+        issueDateString = notIssuedStatuses.indexOf(status) != -1 ? "Not Yet Issued" : issueDateString;
+        orderDateString = notIssuedStatuses.indexOf(status) != -1 ? "Not Yet Issued" : orderDateString;
 
         var row = [value["loanId"],
             value["noteId"],
@@ -72,7 +84,13 @@ populateNotesData = function (data) {
     makeChart("gradeChart", "Grade", "Number of Loans", "Grades", "[[title]] [[category]]: [[value]] loans", gradeChartData);
 
     var paymentsReceivedChartData = buildFloatChartData(paymentsReceived, "$");
-    makeChart("paymentsReceivedChart", "Dollars", "Number of Loans", "Payments Received", "[[title]] [[category]]: [[value]] loans", paymentsReceivedChartData);
+    makeChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", "[[title]] [[category]]: [[value]] loans", paymentsReceivedChartData);
+
+    var defaultsByGradeChartData = buildStringChartData(defaultsByGrade);
+    makeChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", "[[title]] [[category]]: [[value]] loans", defaultsByGradeChartData);
+
+    var defaultedDollarsByGradeChartData = buildStringChartData(defaultedDollarsByGrade);
+    makeChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
 };
 
 buildFloatChartData = function (dict, keyPrefix) {
