@@ -1,0 +1,26 @@
+<table class="table" id="summary">
+  <tr>
+    <th>Account Total</th>
+    <th>Accrued Interest</th>
+    <th>Available Cash</th>
+    <th>Committed Cash</th>
+    <th>Outstanding Principal</th>
+    <th>Interest Received</th>
+    <th>Late Fees Received</th>
+    <th>Principal Received</th>
+    <th>Total Notes</th>
+    <th>Total Portfolios</th>
+  </tr>
+  <tr>
+    <td id="accountTotal">$<%= @data['accountTotal'] %></td>
+    <td id="accruedInterest">$<%= @data['accruedInterest'] %></td>
+    <td id="availableCash">$<%= @data['availableCash'] %></td>
+    <td id="infundingBalance">$<%= @data['infundingBalance'] %></td>
+    <td id="outstandingPrincipal">$<%= @data['outstandingPrincipal'] %></td>
+    <td id="receivedInterest">$<%= @data['receivedInterest'] %></td>
+    <td id="receivedLateFees">$<%= @data['receivedLateFees'] %></td>
+    <td id="receivedPrincipal">$<%= @data['receivedPrincipal'] %></td>
+    <td id="totalNotes"><%= @data['totalNotes'] %></td>
+    <td id="totalPortfolios"><%= @data['totalPortfolios'] %></td>
+  </tr>
+</table>

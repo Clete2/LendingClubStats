@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <title>LendingClub Stats</title>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<div id="wrapper">
+  <div id="sidebar-wrapper">
+    <%= render 'layouts/sidebar' %>
+  </div>
+  <div id="page-content-wrapper">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

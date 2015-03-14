@@ -1,0 +1,25 @@
+<h1>Overview</h1>
+<h3>This page is still in development. Populate your details below and click Update.</h3>
+<h5>Get your account number from the
+  <a href="https://www.lendingclub.com/account/summary.action">Account</a> page.</h5>
+<h5>Get your API key from the <a href="https://www.lendingclub.com/account/profile.action">Settings</a>
+  page.</h5>
+<h6>Your API key and Account number are stored in a cookie in your browser for prepopulation purposes. No
+  data is sent to any server other than LendingClub.</h6>
+<h6><a onclick="clearCookies()">Clear API key and Account number cookies.</a></h6>
+
+<div class="form-group">
+  <div class="input-lg">
+    <input type="text" id="accountNumber" placeholder="Account #" class="col-lg-5" value="<%= @account_number %>"/>
+  </div>
+  <div class="input-lg">
+    <input type="text" id="apiKey" placeholder="API Key" class="col-lg-5" value="<%= @api_key %>"/></div>
+  <div class="btn">
+    <button class="btn-default" id="Update" value="Update" onclick="setCookies()">Update Credentials</button>
+  </div>
+  <h3>
+    <div class="label label-success">
+      <%= @account_number != '' && @api_key != '' ? "You're ready to go! Choose a page on the left." : nil %>
+    </div>
+  </h3>
+</div>
