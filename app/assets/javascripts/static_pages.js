@@ -9,6 +9,8 @@ clearCookies = function() {
         url: 'delete_cookies',
         type: 'POST'
     });
+
+    $("#complete").addClass("hide");
 }
 
 var apiVersion = "v1";
@@ -23,4 +25,6 @@ setCookies = function () {
         type: 'POST',
         data: {'api_key': apiKey, 'account_number': accountNumber}
     });
+
+    $("#complete").removeClass("hide");
 };

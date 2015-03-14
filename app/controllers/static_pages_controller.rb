@@ -2,6 +2,7 @@ class StaticPagesController < ApplicationController
   def index
     @api_key = cookies[:api_key]
     @account_number = cookies[:account_number]
+    @complete = @api_key && @account_number && @api_key != '' && @account_number != '' ? true : false;
   end
 
   def set_cookies

@@ -5,6 +5,9 @@ ready = function() {
         url: 'notes/retrieve',
         async: false
     }).success(function(data) {
+        if(data && data["myNotes"].length > 0 && data['myNotes'][0]['mockedData']) {
+            $("#sampleData").removeAttr("hidden");
+        }
         notesData = data;
     });
 

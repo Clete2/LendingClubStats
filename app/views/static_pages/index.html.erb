@@ -9,17 +9,15 @@
 <h6><a onclick="clearCookies()">Clear API key and Account number cookies.</a></h6>
 
 <div class="form-group">
-  <div class="input-lg">
-    <input type="text" id="accountNumber" placeholder="Account #" class="col-lg-5" value="<%= @account_number %>"/>
+  <div class="col-lg-7">
+    <input type="text" id="accountNumber" placeholder="Account #" class="form-control" value="<%= @account_number %>"/>
   </div>
-  <div class="input-lg">
-    <input type="text" id="apiKey" placeholder="API Key" class="col-lg-5" value="<%= @api_key %>"/></div>
+  <div class="col-lg-7">
+    <input type="text" id="apiKey" placeholder="API Key" class="form-control" value="<%= @api_key %>"/></div>
   <div class="btn">
     <button class="btn-default" id="Update" value="Update" onclick="setCookies()">Update Credentials</button>
   </div>
   <h3>
-    <div class="label label-success">
-      <%= @account_number != '' && @api_key != '' ? "You're ready to go! Choose a page on the left." : nil %>
-    </div>
+    <div id="complete" class="label label-success <%= @complete ? nil : 'hide' %>">You're ready to go! Choose a page on the left.</div>
   </h3>
 </div>
