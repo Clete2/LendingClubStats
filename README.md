@@ -15,4 +15,5 @@ Features
 Installation
 =============
 `bundle install`
+
 `rails server`
