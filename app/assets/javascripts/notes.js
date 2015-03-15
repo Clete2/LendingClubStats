@@ -30,6 +30,7 @@ populateNotesData = function (data) {
     var defaultedDollarsByGrade = {};
     var nextPaymentDates = {};
     var issueDates = {};
+    var creditTrends = {};
 
     populateNotesMetadata(data);
 
@@ -70,6 +71,9 @@ populateNotesData = function (data) {
             var defaultedDollars = value["noteAmount"] - value["paymentsReceived"];
             defaultedDollarsByGrade[grade] = grade in defaultedDollarsByGrade ? defaultedDollarsByGrade[grade] + defaultedDollars : defaultedDollars;
         }
+
+        var creditTrend = value["creditTrend"];
+        creditTrends[creditTrend] = creditTrend in creditTrends ? ++creditTrends[creditTrend] : 1;
 
         var issueDate = new Date(value["issueDate"]);
         var issueDateString = (issueDate.getMonth() + 1) + "/" + issueDate.getDate() + "/" + issueDate.getFullYear();
@@ -121,6 +125,9 @@ populateNotesData = function (data) {
 
     var issueDateChartData = buildChartData(issueDates, dateCompare, dateKey);
     makeChart("issueDateChart", "Date", "Number of Loans", "Issue Date", null, issueDateChartData, 45);
+
+    var creditTrendChartData = buildChartData(creditTrends, creditTrendCompare);
+    makeChart("creditTrendChart", "Trend", "Number of Loans", "Credit Trend", null, creditTrendChartData);
 };
 
 populateNotesMetadata = function (data) {
@@ -221,6 +228,11 @@ dateCompare = function(a, b) {
 
 numberCompare = function(a, b) {
     return a - b;
+};
+
+var trends = ["UP", "FLAT", "DOWN"];
+creditTrendCompare = function(a, b) {
+    return trends.indexOf(a) - trends.indexOf(b);
 };
 
 dollarKey = function(key) {
