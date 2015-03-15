@@ -29,6 +29,8 @@ populateNotesData = function (data) {
     var defaultsByGrade = {};
     var defaultedDollarsByGrade = {};
 
+    populateNotesMetadata(data);
+
     var notesDataTableApi = $("#notesDataTable").dataTable().api();
     notesDataTableApi.rows().remove();
 
@@ -98,6 +100,57 @@ populateNotesData = function (data) {
 
     var defaultedDollarsByGradeChartData = buildStringChartData(defaultedDollarsByGrade);
     makeChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
+};
+
+populateNotesMetadata = function(data) {
+    populateInterestRateMetadata(data);
+    populatePaymentsReceivedMetadata(data);
+};
+
+populateInterestRateMetadata = function(data) {
+    var stats = determineStats(data["myNotes"], "interestRate");
+
+    populateMetadata("InterestRate", roundTwoPlaces(stats[0]) +"%", roundTwoPlaces(stats[1]) +"%", roundTwoPlaces(stats[2]) +"%");
+};
+
+populatePaymentsReceivedMetadata = function(data) {
+    var stats = determineStats(data["myNotes"], "paymentsReceived");
+
+    populateMetadata("Payments", "$"+ roundTwoPlaces(stats[0]), "$"+ roundTwoPlaces(stats[1]), "$"+ roundTwoPlaces(stats[2]));
+};
+
+populateMetadata = function (field, min, max, average) {
+    $("#minimum"+ field).text(min);
+    $("#maximum"+ field).text(max);
+    $("#average"+ field).text(average);
+};
+
+determineStats = function(data, field) {
+    var min = Number.MAX_VALUE;
+    var max = 0;
+    var average = 0;
+
+    $.each(data, function(index, value) {
+        var dataPoint = value[field];
+
+        if(dataPoint < min) {
+            min = dataPoint;
+        }
+
+        if(dataPoint > max) {
+            max = dataPoint;
+        }
+
+        average += dataPoint;
+    });
+
+    average /= data.length;
+
+    return [min, max, average];
+};
+
+roundTwoPlaces = function(num) {
+    return Math.round((num + 0.00001) * 100) / 100;
 };
 
 buildFloatChartData = function (dict, keyPrefix) {
