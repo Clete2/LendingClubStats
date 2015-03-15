@@ -2,20 +2,20 @@
 //= require amcharts/amcharts
 //= require amcharts/serial
 
-ready = function() {
+ready = function () {
     var notesData = null;
 
     $.ajax({
         url: 'notes/retrieve',
         async: false
-    }).success(function(data) {
-        if(data && data["myNotes"].length > 0 && data['myNotes'][0]['mockedData']) {
+    }).success(function (data) {
+        if (data && data["myNotes"].length > 0 && data['myNotes'][0]['mockedData']) {
             $("#sampleData").removeAttr("hidden");
         }
         notesData = data;
     });
 
-   populateNotesData(notesData);
+    populateNotesData(notesData);
 };
 
 $(document).ready(ready);
@@ -28,6 +28,7 @@ populateNotesData = function (data) {
     var paymentsReceived = {};
     var defaultsByGrade = {};
     var defaultedDollarsByGrade = {};
+    var nextPaymentDates = {};
 
     populateNotesMetadata(data);
 
@@ -49,8 +50,15 @@ populateNotesData = function (data) {
         var paymentReceived = value["paymentsReceived"];
         paymentsReceived[paymentReceived] = paymentReceived in paymentsReceived ? ++paymentsReceived[paymentReceived] : 1;
 
+        var nextPaymentDate = value["nextPaymentDate"];
+        var now = new Date();
+        // Only include dates in the future
+        if (nextPaymentDate && new Date(nextPaymentDate) > now) {
+                nextPaymentDates[nextPaymentDate] = nextPaymentDate in nextPaymentDates ? ++nextPaymentDates[nextPaymentDate] : 1;
+        }
+
         var status = value["loanStatus"];
-        if(status === "Charged Off") {
+        if (status === "Charged Off") {
             defaultsByGrade[grade] = grade in defaultsByGrade ? ++defaultsByGrade[grade] : 1;
             var defaultedDollars = value["noteAmount"] - value["paymentsReceived"];
             defaultedDollarsByGrade[grade] = grade in defaultedDollarsByGrade ? defaultedDollarsByGrade[grade] + defaultedDollars : defaultedDollars;
@@ -87,71 +95,75 @@ populateNotesData = function (data) {
     makeChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
 
     var loanAmountsChartData = buildFloatChartData(loanAmounts, "$");
-    makeChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts", "[[title]] [[category]]: [[value]] loans", loanAmountsChartData);
+    makeChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts", null, loanAmountsChartData);
 
     var gradeChartData = buildStringChartData(grades);
-    makeChart("gradeChart", "Grade", "Number of Loans", "Grades", "[[title]] [[category]]: [[value]] loans", gradeChartData);
+    makeChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
 
     var paymentsReceivedChartData = buildFloatChartData(paymentsReceived, "$");
-    makeChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", "[[title]] [[category]]: [[value]] loans", paymentsReceivedChartData);
+    makeChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", null, paymentsReceivedChartData);
 
     var defaultsByGradeChartData = buildStringChartData(defaultsByGrade);
-    makeChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", "[[title]] [[category]]: [[value]] loans", defaultsByGradeChartData);
+    makeChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", null, defaultsByGradeChartData);
 
     var defaultedDollarsByGradeChartData = buildStringChartData(defaultedDollarsByGrade);
     makeChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
+
+    var nextPaymentDateChartData = buildDateChartData(nextPaymentDates);
+    makeChart("nextPaymentDateChart", "Date", "Number of Loans", "Date", null, nextPaymentDateChartData, 45);
 };
 
-populateNotesMetadata = function(data) {
+populateNotesMetadata = function (data) {
     populateInterestRateMetadata(data);
     populatePaymentsReceivedMetadata(data);
     populateAccrualMetadata(data);
 };
 
-populateInterestRateMetadata = function(data) {
+populateInterestRateMetadata = function (data) {
     var stats = determineStats(data["myNotes"], "interestRate");
     delete stats["total"];
 
     populateMetadata("InterestRate", stats, roundTwoPlaces, null, "%");
 };
 
-populatePaymentsReceivedMetadata = function(data) {
+populatePaymentsReceivedMetadata = function (data) {
     var stats = determineStats(data["myNotes"], "paymentsReceived");
 
     populateMetadata("Payments", stats, roundTwoPlaces, "$");
 };
 
-populateAccrualMetadata = function(data) {
+populateAccrualMetadata = function (data) {
     var stats = determineStats(data["myNotes"], "accruedInterest");
 
     populateMetadata("Accrual", stats, roundTwoPlaces, "$");
 }
 
 populateMetadata = function (field, stats, valueFunction, prefix, suffix) {
-    valueFunction = valueFunction ? valueFunction : function() {};
+    valueFunction = valueFunction ? valueFunction : function () {
+    };
     prefix = prefix ? prefix : "";
     suffix = suffix ? suffix : "";
-    $.each(stats, function(key, value) {
+    $.each(stats, function (key, value) {
         // Apply custom function to the value
         value = valueFunction(value);
-        $("#"+ key + field).text(prefix + String(value) + suffix);
+        $("#" + key + field).text(prefix + String(value) + suffix);
     });
 };
 
-determineStats = function(data, field) {
+determineStats = function (data, field) {
     var min = Number.MAX_VALUE;
     var max = 0;
     var average = 0;
     var total = 0;
 
-    $.each(data, function(index, value) {
+    $.each(data, function (index, value) {
         var dataPoint = value[field];
 
-        if(dataPoint < min) {
+        if (dataPoint < min) {
             min = dataPoint;
         }
 
-        if(dataPoint > max) {
+        if (dataPoint > max) {
             max = dataPoint;
         }
 
@@ -163,7 +175,7 @@ determineStats = function(data, field) {
     return {"minimum": min, "maximum": max, "average": average, "total": total};
 };
 
-roundTwoPlaces = function(num) {
+roundTwoPlaces = function (num) {
     return Math.round((num + 0.00001) * 100) / 100;
 };
 
@@ -207,7 +219,29 @@ buildStringChartData = function (dict, keyPrefix) {
     return chartData;
 };
 
-makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data) {
+buildDateChartData = function (dict) {
+    var chartData = [];
+
+    var keys = [];
+    for (var key in dict) {
+        keys.push(key);
+    }
+    keys.sort(function (a, b) {
+        return new Date(a) - new Date(b);
+    });
+
+    $.each(keys, function (index, key) {
+        var value = dict[key];
+        var date = new Date(key);
+        chartData.push({"category": (date.getMonth() + 1) +"/"+ date.getDate() +"/"+ date.getFullYear(), "count": value});
+    });
+
+    return chartData;
+};
+
+makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data, labelRotation) {
+    balloonText = balloonText ? balloonText : "[[title]] [[category]]: [[value]] loans";
+    labelRotation = labelRotation ? labelRotation : 0;
     AmCharts.makeChart(chartDiv,
         {
             "type": "serial",
@@ -216,7 +250,8 @@ makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonTex
             "angle": 30,
             "startDuration": 1,
             "categoryAxis": {
-                "gridPosition": "start"
+                "gridPosition": "start",
+                "labelRotation": labelRotation
             },
             "trendLines": [],
             "graphs": [
@@ -226,7 +261,7 @@ makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonTex
                     "id": "AmGraph-1",
                     "title": title,
                     "type": "column",
-                    "valueField": "count"
+                    "valueField": "count",
                 }
             ],
             "guides": [],
@@ -234,7 +269,7 @@ makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonTex
                 {
                     "id": "ValueAxis-1",
                     "stackType": "3d",
-                    "title": valueAxisTitle
+                    "title": valueAxisTitle,
                 }
             ],
             "allLabels": [],
