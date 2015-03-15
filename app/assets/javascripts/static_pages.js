@@ -5,6 +5,8 @@ clearCookies = function() {
     });
 
     $("#complete").addClass("hide");
+    $("#apiKey").attr("value", "");
+    $("#accountNumber").attr("value", "");
 }
 
 var apiVersion = "v1";

@@ -28,6 +28,7 @@ class NotesController < ApplicationController
                       'loanAmount' => 13000,
                       'noteAmount' => 25,
                       'paymentsReceived' => 22.52,
+                      'accruedInterest' => 0.12,
                       'issueDate' => '01/01/2013',
                       'orderDate' => '12/27/2012'
                   },
@@ -41,6 +42,7 @@ class NotesController < ApplicationController
                       'grade' => 'D1',
                       'loanAmount' => 22000,
                       'noteAmount' => 50,
+                      'accruedInterest' => 0.22,
                       'paymentsReceived' => 12.01,
                       'issueDate' => '03/10/2015',
                       'orderDate' => '03/15/2015'
