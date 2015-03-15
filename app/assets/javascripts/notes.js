@@ -111,7 +111,7 @@ populateNotesData = function (data) {
     var gradeChartData = buildChartData(grades);
     makeChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
 
-    var paymentsReceivedChartData = buildChartData(paymentsReceived, null, dollarKey);
+    var paymentsReceivedChartData = buildChartData(paymentsReceived, numberCompare, dollarKey);
     makeChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", null, paymentsReceivedChartData);
 
     var defaultsByGradeChartData = buildChartData(defaultsByGrade);
