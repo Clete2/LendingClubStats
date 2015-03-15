@@ -1,6 +1,6 @@
 Introduction
 =============
-A site to view stats about your LendingClub account.
+A site to view stats about your LendingClub account. We don't store your data, so you can rest easy.
 
 Live Website
 =============
