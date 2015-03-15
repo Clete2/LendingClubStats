@@ -29,6 +29,7 @@ populateNotesData = function (data) {
     var defaultsByGrade = {};
     var defaultedDollarsByGrade = {};
     var nextPaymentDates = {};
+    var issueDates = {};
 
     populateNotesMetadata(data);
 
@@ -36,6 +37,8 @@ populateNotesData = function (data) {
     notesDataTableApi.rows().remove();
 
     var notIssuedStatuses = ["In Review", "In Funding"];
+
+    var now = new Date();
 
     $.each(data["myNotes"], function (index, value) {
         var rate = value["interestRate"];
@@ -51,10 +54,14 @@ populateNotesData = function (data) {
         paymentsReceived[paymentReceived] = paymentReceived in paymentsReceived ? ++paymentsReceived[paymentReceived] : 1;
 
         var nextPaymentDate = value["nextPaymentDate"];
-        var now = new Date();
         // Only include dates in the future
         if (nextPaymentDate && new Date(nextPaymentDate) > now) {
                 nextPaymentDates[nextPaymentDate] = nextPaymentDate in nextPaymentDates ? ++nextPaymentDates[nextPaymentDate] : 1;
+        }
+
+        var issueDate = value["issueDate"];
+        if(issueDate) {
+            issueDates[issueDate] = issueDate in issueDates ? ++issueDates[issueDate] : 1;
         }
 
         var status = value["loanStatus"];
@@ -91,26 +98,29 @@ populateNotesData = function (data) {
 
     notesDataTableApi.draw();
 
-    var interestRatesChartData = buildFloatChartData(interestRates);
+    var interestRatesChartData = buildChartData(interestRates, numberCompare, percentKey);
     makeChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
 
-    var loanAmountsChartData = buildFloatChartData(loanAmounts, "$");
+    var loanAmountsChartData = buildChartData(loanAmounts, numberCompare, dollarKey);
     makeChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts", null, loanAmountsChartData);
 
-    var gradeChartData = buildStringChartData(grades);
+    var gradeChartData = buildChartData(grades);
     makeChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
 
-    var paymentsReceivedChartData = buildFloatChartData(paymentsReceived, "$");
+    var paymentsReceivedChartData = buildChartData(paymentsReceived, null, dollarKey);
     makeChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", null, paymentsReceivedChartData);
 
-    var defaultsByGradeChartData = buildStringChartData(defaultsByGrade);
+    var defaultsByGradeChartData = buildChartData(defaultsByGrade);
     makeChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", null, defaultsByGradeChartData);
 
-    var defaultedDollarsByGradeChartData = buildStringChartData(defaultedDollarsByGrade);
+    var defaultedDollarsByGradeChartData = buildChartData(defaultedDollarsByGrade, numberCompare);
     makeChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
 
-    var nextPaymentDateChartData = buildDateChartData(nextPaymentDates);
-    makeChart("nextPaymentDateChart", "Date", "Number of Loans", "Date", null, nextPaymentDateChartData, 45);
+    var nextPaymentDateChartData = buildChartData(nextPaymentDates, dateCompare, dateKey);
+    makeChart("nextPaymentDateChart", "Date", "Number of Loans", "Next Payment Date", null, nextPaymentDateChartData, 45);
+
+    var issueDateChartData = buildChartData(issueDates, dateCompare, dateKey);
+    makeChart("issueDateChart", "Date", "Number of Loans", "Issue Date", null, issueDateChartData, 45);
 };
 
 populateNotesMetadata = function (data) {
@@ -179,64 +189,51 @@ roundTwoPlaces = function (num) {
     return Math.round((num + 0.00001) * 100) / 100;
 };
 
-buildFloatChartData = function (dict, keyPrefix) {
-    keyPrefix = keyPrefix ? keyPrefix : "";
+buildChartData = function(dict, compareFunction, keyFunction, valueFunction) {
+    keyFunction = keyFunction ? keyFunction : function(key) {return key;};
+    valueFunction = valueFunction ? valueFunction : function(value) {return value;};
 
     var chartData = [];
 
+    // Sort keys
     var keys = [];
     for (var key in dict) {
         keys.push(key);
     }
-    keys.sort(function (a, b) {
-        return a - b;
-    });
 
-    $.each(keys, function (index, key) {
-        var value = dict[key];
-        chartData.push({"category": keyPrefix + key, "count": value});
+    if(compareFunction) {
+        keys.sort(compareFunction);
+    } else {
+        keys.sort();
+    }
+
+    $.each(keys, function(index, key) {
+       var value = dict[key];
+        chartData.push({"category": keyFunction(key), "count": valueFunction(value)});
     });
 
     return chartData;
+}
+
+dateCompare = function(a, b) {
+    return new Date(a) - new Date(b);
 };
 
-buildStringChartData = function (dict, keyPrefix) {
-    keyPrefix = keyPrefix ? keyPrefix : "";
-
-    var chartData = [];
-
-    var keys = [];
-    for (var key in dict) {
-        keys.push(key);
-    }
-    keys.sort();
-
-    $.each(keys, function (index, key) {
-        var value = dict[key];
-        chartData.push({"category": keyPrefix + key, "count": value});
-    });
-
-    return chartData;
+numberCompare = function(a, b) {
+    return a - b;
 };
 
-buildDateChartData = function (dict) {
-    var chartData = [];
+dollarKey = function(key) {
+    return "$"+ key;
+};
 
-    var keys = [];
-    for (var key in dict) {
-        keys.push(key);
-    }
-    keys.sort(function (a, b) {
-        return new Date(a) - new Date(b);
-    });
+percentKey = function(key) {
+    return key +"%";
+};
 
-    $.each(keys, function (index, key) {
-        var value = dict[key];
-        var date = new Date(key);
-        chartData.push({"category": (date.getMonth() + 1) +"/"+ date.getDate() +"/"+ date.getFullYear(), "count": value});
-    });
-
-    return chartData;
+dateKey = function(key) {
+    var date = new Date(key);
+    return (date.getMonth() + 1) +"/"+ date.getDate() +"/"+ date.getFullYear();
 };
 
 makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data, labelRotation) {
