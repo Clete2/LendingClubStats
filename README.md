@@ -2,7 +2,7 @@ Introduction
 =============
 A site to view stats about your LendingClub account.
 
-Live Demo
+Live Website
 =============
 http://lcs.clete2.com/
 
