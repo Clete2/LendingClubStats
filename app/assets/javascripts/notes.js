@@ -1,3 +1,7 @@
+//= require datatables
+//= require amcharts/amcharts
+//= require amcharts/serial
+
 ready = function() {
     var notesData = null;
 

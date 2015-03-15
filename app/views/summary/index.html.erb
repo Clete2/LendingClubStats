@@ -2,6 +2,7 @@
     <h1>Sample Data</h1>
 <% end %>
 <table class="table" id="summary">
+  <thead>
   <tr>
     <th>Account Total</th>
     <th>Accrued Interest</th>
@@ -14,6 +15,8 @@
     <th>Total Notes</th>
     <th>Total Portfolios</th>
   </tr>
+  </thead>
+  <tbody>
   <tr>
     <td id="accountTotal">$<%= @data['accountTotal'] %></td>
     <td id="accruedInterest">$<%= @data['accruedInterest'] %></td>
@@ -26,4 +29,5 @@
     <td id="totalNotes"><%= @data['totalNotes'] %></td>
     <td id="totalPortfolios"><%= @data['totalPortfolios'] %></td>
   </tr>
+  </tbody>
 </table>

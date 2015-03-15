@@ -1,9 +1,3 @@
-//= require jquery
-//= require bootstrap
-//= require amcharts/amcharts
-//= require amcharts/serial
-//= require datatables
-
 clearCookies = function() {
     $.ajax({
         url: 'delete_cookies',
