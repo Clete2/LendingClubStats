@@ -57,11 +57,11 @@ populateNotesData = function (data) {
         var nextPaymentDate = value["nextPaymentDate"];
         // Only include dates in the future
         if (nextPaymentDate && new Date(nextPaymentDate) > now) {
-                nextPaymentDates[nextPaymentDate] = nextPaymentDate in nextPaymentDates ? ++nextPaymentDates[nextPaymentDate] : 1;
+            nextPaymentDates[nextPaymentDate] = nextPaymentDate in nextPaymentDates ? ++nextPaymentDates[nextPaymentDate] : 1;
         }
 
         var issueDate = value["issueDate"];
-        if(issueDate) {
+        if (issueDate) {
             issueDates[issueDate] = issueDate in issueDates ? ++issueDates[issueDate] : 1;
         }
 
@@ -196,9 +196,13 @@ roundTwoPlaces = function (num) {
     return Math.round((num + 0.00001) * 100) / 100;
 };
 
-buildChartData = function(dict, compareFunction, keyFunction, valueFunction) {
-    keyFunction = keyFunction ? keyFunction : function(key) {return key;};
-    valueFunction = valueFunction ? valueFunction : function(value) {return value;};
+buildChartData = function (dict, compareFunction, keyFunction, valueFunction) {
+    keyFunction = keyFunction ? keyFunction : function (key) {
+        return key;
+    };
+    valueFunction = valueFunction ? valueFunction : function (value) {
+        return value;
+    };
 
     var chartData = [];
 
@@ -208,44 +212,44 @@ buildChartData = function(dict, compareFunction, keyFunction, valueFunction) {
         keys.push(key);
     }
 
-    if(compareFunction) {
+    if (compareFunction) {
         keys.sort(compareFunction);
     } else {
         keys.sort();
     }
 
-    $.each(keys, function(index, key) {
-       var value = dict[key];
+    $.each(keys, function (index, key) {
+        var value = dict[key];
         chartData.push({"category": keyFunction(key), "count": valueFunction(value)});
     });
 
     return chartData;
 }
 
-dateCompare = function(a, b) {
+dateCompare = function (a, b) {
     return new Date(a) - new Date(b);
 };
 
-numberCompare = function(a, b) {
+numberCompare = function (a, b) {
     return a - b;
 };
 
 var trends = ["UP", "FLAT", "DOWN"];
-creditTrendCompare = function(a, b) {
+creditTrendCompare = function (a, b) {
     return trends.indexOf(a) - trends.indexOf(b);
 };
 
-dollarKey = function(key) {
-    return "$"+ key;
+dollarKey = function (key) {
+    return "$" + key;
 };
 
-percentKey = function(key) {
-    return key +"%";
+percentKey = function (key) {
+    return key + "%";
 };
 
-dateKey = function(key) {
+dateKey = function (key) {
     var date = new Date(key);
-    return (date.getMonth() + 1) +"/"+ date.getDate() +"/"+ date.getFullYear();
+    return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
 };
 
 makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data, labelRotation) {

@@ -5,7 +5,7 @@
 <h5>Get your API key from the <a href="https://www.lendingclub.com/account/profile.action">Settings</a>
   page.</h5>
 <h6>Your API key and Account number are stored in a cookie in your browser for prepopulation purposes. No
-  data is sent to any server other than LendingClub.</h6>
+  data is ever saved to our server.</h6>
 <h6><a onclick="clearCookies()">Clear API key and Account number cookies.</a></h6>
 
 <div class="form-group">
@@ -18,6 +18,8 @@
     <button class="btn-default" id="Update" value="Update" onclick="setCookies()">Update Credentials</button>
   </div>
   <h3>
-    <div id="complete" class="label label-success <%= @complete ? nil : 'hide' %>">You're ready to go! Choose a page on the left.</div>
+    <div id="complete" class="label label-success <%= @complete ? nil : 'hide' %>">You're ready to go! Choose a page on
+      the left.
+    </div>
   </h3>
 </div>
