@@ -1,7 +1,0 @@
-== README
-A site to view stats about your LendingClub account.
-
-= Features
-* No sign up required
-* We don't store your data!
-* Nice graphs
