@@ -105,30 +105,44 @@ populateNotesData = function (data) {
 populateNotesMetadata = function(data) {
     populateInterestRateMetadata(data);
     populatePaymentsReceivedMetadata(data);
+    populateAccrualMetadata(data);
 };
 
 populateInterestRateMetadata = function(data) {
     var stats = determineStats(data["myNotes"], "interestRate");
+    delete stats["total"];
 
-    populateMetadata("InterestRate", roundTwoPlaces(stats[0]) +"%", roundTwoPlaces(stats[1]) +"%", roundTwoPlaces(stats[2]) +"%");
+    populateMetadata("InterestRate", stats, roundTwoPlaces, null, "%");
 };
 
 populatePaymentsReceivedMetadata = function(data) {
     var stats = determineStats(data["myNotes"], "paymentsReceived");
 
-    populateMetadata("Payments", "$"+ roundTwoPlaces(stats[0]), "$"+ roundTwoPlaces(stats[1]), "$"+ roundTwoPlaces(stats[2]));
+    populateMetadata("Payments", stats, roundTwoPlaces, "$");
 };
 
-populateMetadata = function (field, min, max, average) {
-    $("#minimum"+ field).text(min);
-    $("#maximum"+ field).text(max);
-    $("#average"+ field).text(average);
+populateAccrualMetadata = function(data) {
+    var stats = determineStats(data["myNotes"], "accruedInterest");
+
+    populateMetadata("Accrual", stats, roundTwoPlaces, "$");
+}
+
+populateMetadata = function (field, stats, valueFunction, prefix, suffix) {
+    valueFunction = valueFunction ? valueFunction : function() {};
+    prefix = prefix ? prefix : "";
+    suffix = suffix ? suffix : "";
+    $.each(stats, function(key, value) {
+        // Apply custom function to the value
+        value = valueFunction(value);
+        $("#"+ key + field).text(prefix + String(value) + suffix);
+    });
 };
 
 determineStats = function(data, field) {
     var min = Number.MAX_VALUE;
     var max = 0;
     var average = 0;
+    var total = 0;
 
     $.each(data, function(index, value) {
         var dataPoint = value[field];
@@ -141,12 +155,12 @@ determineStats = function(data, field) {
             max = dataPoint;
         }
 
-        average += dataPoint;
+        total += dataPoint;
     });
 
-    average /= data.length;
+    average = total / data.length;
 
-    return [min, max, average];
+    return {"minimum": min, "maximum": max, "average": average, "total": total};
 };
 
 roundTwoPlaces = function(num) {
