@@ -1,6 +1,7 @@
 //= require datatables
 //= require amcharts/amcharts
 //= require amcharts/serial
+//= require amcharts/pie
 
 ready = function () {
     var notesData = null;
@@ -103,31 +104,31 @@ populateNotesData = function (data) {
     notesDataTableApi.draw();
 
     var interestRatesChartData = buildChartData(interestRates, numberCompare, percentKey);
-    makeChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
+    makeSerialChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
 
     var loanAmountsChartData = buildChartData(loanAmounts, numberCompare, dollarKey);
-    makeChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts", null, loanAmountsChartData);
+    makeSerialChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts", null, loanAmountsChartData);
 
     var gradeChartData = buildChartData(grades);
-    makeChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
+    makeSerialChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
 
     var paymentsReceivedChartData = buildChartData(paymentsReceived, numberCompare, dollarKey);
-    makeChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", null, paymentsReceivedChartData);
+    makeSerialChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", null, paymentsReceivedChartData);
 
     var defaultsByGradeChartData = buildChartData(defaultsByGrade);
-    makeChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", null, defaultsByGradeChartData);
+    makeSerialChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", null, defaultsByGradeChartData);
 
     var defaultedDollarsByGradeChartData = buildChartData(defaultedDollarsByGrade, numberCompare);
-    makeChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
+    makeSerialChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
 
     var nextPaymentDateChartData = buildChartData(nextPaymentDates, dateCompare, dateKey);
-    makeChart("nextPaymentDateChart", "Date", "Number of Loans", "Next Payment Date", null, nextPaymentDateChartData, 45);
+    makeSerialChart("nextPaymentDateChart", "Date", "Number of Loans", "Next Payment Date", null, nextPaymentDateChartData, 45, true);
 
     var issueDateChartData = buildChartData(issueDates, dateCompare, dateKey);
-    makeChart("issueDateChart", "Date", "Number of Loans", "Issue Date", null, issueDateChartData, 45);
+    makeSerialChart("issueDateChart", "Date", "Number of Loans", "Issue Date", null, issueDateChartData, 45, true);
 
     var creditTrendChartData = buildChartData(creditTrends, creditTrendCompare);
-    makeChart("creditTrendChart", "Trend", "Number of Loans", "Credit Trend", null, creditTrendChartData);
+    makePieChart("creditTrendChart", creditTrendChartData);
 };
 
 populateNotesMetadata = function (data) {
@@ -153,7 +154,7 @@ populateAccrualMetadata = function (data) {
     var stats = determineStats(data["myNotes"], "accruedInterest");
 
     populateMetadata("Accrual", stats, roundTwoPlaces, "$");
-}
+};
 
 populateMetadata = function (field, stats, valueFunction, prefix, suffix) {
     valueFunction = valueFunction ? valueFunction : function () {
@@ -252,21 +253,20 @@ dateKey = function (key) {
     return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
 };
 
-makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data, labelRotation) {
+makeSerialChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data, labelRotation, dates) {
     balloonText = balloonText ? balloonText : "[[title]] [[category]]: [[value]] loans";
     labelRotation = labelRotation ? labelRotation : 0;
+
     AmCharts.makeChart(chartDiv,
         {
             "type": "serial",
-            "pathToImages": "http://cdn.amcharts.com/lib/3/images/",
             "categoryField": "category",
-            "angle": 30,
             "startDuration": 1,
             "categoryAxis": {
                 "gridPosition": "start",
-                "labelRotation": labelRotation
+                "labelRotation": labelRotation,
+                "parseDates": dates
             },
-            "trendLines": [],
             "graphs": [
                 {
                     "balloonText": balloonText,
@@ -274,10 +274,9 @@ makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonTex
                     "id": "AmGraph-1",
                     "title": title,
                     "type": "column",
-                    "valueField": "count",
+                    "valueField": "count"
                 }
             ],
-            "guides": [],
             "valueAxes": [
                 {
                     "id": "ValueAxis-1",
@@ -285,8 +284,6 @@ makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonTex
                     "title": valueAxisTitle,
                 }
             ],
-            "allLabels": [],
-            "balloon": {},
             "legend": {
                 "useGraphSettings": true
             },
@@ -300,4 +297,13 @@ makeChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonTex
             "dataProvider": data
         }
     );
+};
+
+makePieChart = function (chartDiv, data) {
+    AmCharts.makeChart(chartDiv, {
+        "type": "pie",
+        "titleField": "category",
+        "valueField": "count",
+        "dataProvider": data
+    });
 };
