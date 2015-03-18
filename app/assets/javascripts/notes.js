@@ -43,16 +43,16 @@ populateNotesData = function (data) {
     var now = new Date();
 
     $.each(data["myNotes"], function (index, value) {
-        var rate = value["interestRate"];
+        var rate = Math.round(value["interestRate"]);
         interestRates[rate] = rate in interestRates ? ++interestRates[rate] : 1;
 
-        var amount = value["loanAmount"];
+        var amount = Math.round(value["loanAmount"]/1000)*1000;
         loanAmounts[amount] = amount in loanAmounts ? ++loanAmounts[amount] : 1;
 
         var grade = value["grade"];
         grades[grade] = grade in grades ? ++grades[grade] : 1;
 
-        var paymentReceived = value["paymentsReceived"];
+        var paymentReceived = Math.round(value["paymentsReceived"]);
         paymentsReceived[paymentReceived] = paymentReceived in paymentsReceived ? ++paymentsReceived[paymentReceived] : 1;
 
         var nextPaymentDate = value["nextPaymentDate"];
@@ -69,7 +69,7 @@ populateNotesData = function (data) {
         var status = value["loanStatus"];
         if (status === "Charged Off") {
             defaultsByGrade[grade] = grade in defaultsByGrade ? ++defaultsByGrade[grade] : 1;
-            var defaultedDollars = value["noteAmount"] - value["paymentsReceived"];
+            var defaultedDollars = Math.round(value["noteAmount"] - value["paymentsReceived"]);
             defaultedDollarsByGrade[grade] = grade in defaultedDollarsByGrade ? defaultedDollarsByGrade[grade] + defaultedDollars : defaultedDollars;
         }
 
@@ -104,16 +104,16 @@ populateNotesData = function (data) {
     notesDataTableApi.draw();
 
     var interestRatesChartData = buildChartData(interestRates, numberCompare, percentKey);
-    makeSerialChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
+    makeSerialChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates (Rounded)", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
 
     var loanAmountsChartData = buildChartData(loanAmounts, numberCompare, dollarKey);
-    makeSerialChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts", null, loanAmountsChartData);
+    makeSerialChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts (Rounded to $1,000)", null, loanAmountsChartData);
 
     var gradeChartData = buildChartData(grades);
     makeSerialChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
 
     var paymentsReceivedChartData = buildChartData(paymentsReceived, numberCompare, dollarKey);
-    makeSerialChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received", null, paymentsReceivedChartData);
+    makeSerialChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received (Rounded)", null, paymentsReceivedChartData);
 
     var defaultsByGradeChartData = buildChartData(defaultsByGrade);
     makeSerialChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", null, defaultsByGradeChartData);
