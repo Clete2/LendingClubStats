@@ -46,7 +46,7 @@ populateNotesData = function (data) {
         var rate = Math.round(value["interestRate"]);
         interestRates[rate] = rate in interestRates ? ++interestRates[rate] : 1;
 
-        var amount = Math.round(value["loanAmount"]/1000)*1000;
+        var amount = Math.round(value["loanAmount"] / 1000) * 1000;
         loanAmounts[amount] = amount in loanAmounts ? ++loanAmounts[amount] : 1;
 
         var grade = value["grade"];
@@ -157,7 +157,8 @@ populateAccrualMetadata = function (data) {
 };
 
 populateMetadata = function (field, stats, valueFunction, prefix, suffix) {
-    valueFunction = valueFunction ? valueFunction : function () {
+    valueFunction = valueFunction ? valueFunction : function (value) {
+        return value;
     };
     prefix = prefix ? prefix : "";
     suffix = suffix ? suffix : "";
@@ -225,7 +226,7 @@ buildChartData = function (dict, compareFunction, keyFunction, valueFunction) {
     });
 
     return chartData;
-}
+};
 
 dateCompare = function (a, b) {
     return new Date(a) - new Date(b);
@@ -281,7 +282,7 @@ makeSerialChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, ball
                 {
                     "id": "ValueAxis-1",
                     "stackType": "3d",
-                    "title": valueAxisTitle,
+                    "title": valueAxisTitle
                 }
             ],
             "legend": {
