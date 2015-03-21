@@ -1,4 +1,6 @@
 class SummaryController < ApplicationController
+  require 'concerns/random_data'
+
   def index
     @data = retrieve()
 
@@ -13,20 +15,8 @@ class SummaryController < ApplicationController
       data = HTTParty.get('https://api.lendingclub.com/api/investor/v1/accounts/'+ cookies[:account_number] +'/summary',
                           {:headers => {'Authorization' => cookies[:api_key]}})
     else
-      # Give the user some mocked data.
-      data = {
-          'mockedData' => true,
-          'accountTotal' => 1050,
-          'accruedInterest' => 12.20,
-          'availableCash' => 50,
-          'infundingBalance' => 25,
-          'outstandingPrincipal' => 976.08,
-          'receivedInterest' => 124.98,
-          'receivedLateFees' => 1.20,
-          'receivedPrincipal' => 573.71,
-          'totalNotes' => 67,
-          'totalPortfolios' => 4
-      }
+      random_data = RandomData.new
+      data = random_data.generate_random_account_data
     end
   end
 end

@@ -1,5 +1,5 @@
 class NotesController < ApplicationController
-  require 'concerns/random_note_data'
+  require 'concerns/random_data'
 
   def index
   end
@@ -13,7 +13,7 @@ class NotesController < ApplicationController
           {:headers => {'Authorization' => cookies[:api_key]}}
       )
     else
-      random_note_data = RandomNoteData.new
+      random_note_data = RandomData.new
       data = random_note_data.generate_random_notes(100)
     end
     render json: data
