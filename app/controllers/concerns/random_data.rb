@@ -65,8 +65,22 @@ class RandomData
     # TODO: Maybe move this out of the loan
     notes_list[0]['mockedData'] = true
 
-    data = {
-        'myNotes' => notes_list
+    data = {'myNotes' => notes_list}
+  end
+
+  def generate_random_portfolio_data(count)
+    portfolios_list = []
+
+    (0..count).each {
+      portfolio = {
+          'portfolioId' => rand(100000..999999),
+          'portfolioName' => 'Sample Portfolio',
+          'portfolioDescription' => 'Sample Description'
+      }
+
+      portfolios_list.push(portfolio)
     }
+
+    data = {'myPortfolios' => portfolios_list}
   end
 end
