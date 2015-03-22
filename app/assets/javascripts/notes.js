@@ -3,26 +3,23 @@
 //= require amcharts/serial
 //= require amcharts/pie
 
-ready = function () {
+$(document).ready(function () {
     var notesData = null;
 
     $.ajax({
         url: 'notes/retrieve',
         async: false
     }).success(function (data) {
-        if (data && data["myNotes"].length > 0 && data['myNotes'][0]['mockedData']) {
+        if (data && data["myNotes"].length > 0 && data["myNotes"][0]['mockedData']) {
             $("#sampleData").removeAttr("hidden");
         }
         notesData = data;
     });
 
-    populateNotesData(notesData);
-};
+    populateSummaryData(notesData);
+});
 
-$(document).ready(ready);
-$(document).on('page:load', ready);
-
-populateNotesData = function (data) {
+populateSummaryData = function (data) {
     var interestRates = {};
     var loanAmounts = {};
     var grades = {};

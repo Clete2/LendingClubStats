@@ -5,8 +5,6 @@ class NotesController < ApplicationController
   end
 
   def retrieve
-    data = nil;
-
     if cookies[:account_number] && cookies[:api_key]
       data = HTTParty.get(
           'https://api.lendingclub.com/api/investor/v1/accounts/'+ cookies[:account_number] +'/detailednotes',

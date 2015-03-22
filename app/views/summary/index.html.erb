@@ -1,7 +1,5 @@
-<% if @data['mockedData'] %>
-    <h1>Sample Data</h1>
-<% end %>
-<table class="table" id="summary">
+<h1 id="sampleData" hidden="hidden">Sample Data</h1>
+<table class="table" id="account">
   <thead>
   <tr>
     <th>Account Total</th>
@@ -18,16 +16,27 @@
   </thead>
   <tbody>
   <tr>
-    <td id="accountTotal">$<%= @data['accountTotal'] %></td>
-    <td id="accruedInterest">$<%= @data['accruedInterest'] %></td>
-    <td id="availableCash">$<%= @data['availableCash'] %></td>
-    <td id="infundingBalance">$<%= @data['infundingBalance'] %></td>
-    <td id="outstandingPrincipal">$<%= @data['outstandingPrincipal'] %></td>
-    <td id="receivedInterest">$<%= @data['receivedInterest'] %></td>
-    <td id="receivedLateFees">$<%= @data['receivedLateFees'] %></td>
-    <td id="receivedPrincipal">$<%= @data['receivedPrincipal'] %></td>
-    <td id="totalNotes"><%= @data['totalNotes'] %></td>
-    <td id="totalPortfolios"><%= @data['totalPortfolios'] %></td>
+    <td id="accountTotal"></td>
+    <td id="accruedInterest"></td>
+    <td id="availableCash"></td>
+    <td id="infundingBalance"></td>
+    <td id="outstandingPrincipal"></td>
+    <td id="receivedInterest"></td>
+    <td id="receivedLateFees"></td>
+    <td id="receivedPrincipal"></td>
+    <td id="totalNotes"></td>
+    <td id="totalPortfolios"></td>
   </tr>
+  </tbody>
+</table>
+<table class="table" id="portfolio">
+  <thead>
+  <tr>
+    <th>Portfolio ID</th>
+    <th>Portfolio Name</th>
+    <th>Portfolio Description</th>
+  </tr>
+  </thead>
+  <tbody>
   </tbody>
 </table>

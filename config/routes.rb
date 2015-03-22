@@ -4,7 +4,12 @@ Rails.application.routes.draw do
   post 'set_cookies' => 'static_pages#set_cookies'
   post 'delete_cookies' => 'static_pages#delete_cookies'
 
-  resources :summary
+  resources :summary do
+    collection do
+      get 'retrieve_summary_data'
+      get 'retrieve_portfolio_data'
+    end
+  end
 
   resources :notes do
     collection do
