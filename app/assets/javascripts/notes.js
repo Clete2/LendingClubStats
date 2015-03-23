@@ -1,8 +1,3 @@
-//= require datatables
-//= require amcharts/amcharts
-//= require amcharts/serial
-//= require amcharts/pie
-
 $(document).ready(function () {
     var notesData = null;
 
