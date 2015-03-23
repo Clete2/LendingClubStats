@@ -11,7 +11,6 @@
 // about supported directives.
 //
 //= require jquery
-//= require jquery.turbolinks
 //= require jquery_ujs
 
 //= require bootstrap
@@ -19,7 +18,3 @@
 //= require amcharts/amcharts
 //= require amcharts/serial
 //= require amcharts/pie
-
-//= require_tree .
-
-//= require turbolinks

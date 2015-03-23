@@ -1,17 +1,12 @@
 $(document).ready(function () {
-    var notesData = null;
-
     $.ajax({
-        url: 'notes/retrieve',
-        async: false
+        url: 'notes/retrieve'
     }).success(function (data) {
         if (data && data["myNotes"].length > 0 && data["myNotes"][0]['mockedData']) {
             $("#sampleData").removeAttr("hidden");
         }
-        notesData = data;
+        populateSummaryData(data);
     });
-
-    populateSummaryData(notesData);
 });
 
 populateSummaryData = function (data) {
