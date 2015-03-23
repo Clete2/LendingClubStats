@@ -22,33 +22,6 @@ populateSummaryData = function (data) {
 
     populateNotesMetadata(data);
 
-    var interestRatesChartData = buildChartData(interestRates, numberCompare, percentKey);
-    makeSerialChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates (Rounded)", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
-
-    var loanAmountsChartData = buildChartData(loanAmounts, numberCompare, dollarKey);
-    makeSerialChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts (Rounded to $1,000)", null, loanAmountsChartData);
-
-    var gradeChartData = buildChartData(grades);
-    makeSerialChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
-
-    var paymentsReceivedChartData = buildChartData(paymentsReceived, numberCompare, dollarKey);
-    makeSerialChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received (Rounded)", null, paymentsReceivedChartData);
-
-    var defaultsByGradeChartData = buildChartData(defaultsByGrade);
-    makeSerialChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", null, defaultsByGradeChartData);
-
-    var defaultedDollarsByGradeChartData = buildChartData(defaultedDollarsByGrade, numberCompare);
-    makeSerialChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
-
-    var nextPaymentDateChartData = buildChartData(nextPaymentDates, dateCompare, dateKey);
-    makeSerialChart("nextPaymentDateChart", "Date", "Number of Loans", "Next Payment Date", null, nextPaymentDateChartData, 45, true);
-
-    var issueDateChartData = buildChartData(issueDates, dateCompare, dateKey);
-    makeSerialChart("issueDateChart", "Date", "Number of Loans", "Issue Date", null, issueDateChartData, 45, true);
-
-    var creditTrendChartData = buildChartData(creditTrends, creditTrendCompare);
-    makePieChart("creditTrendChart", creditTrendChartData);
-
     var notesDataTableApi = $("#notesDataTable").dataTable().api();
     notesDataTableApi.rows().remove();
 
@@ -114,6 +87,33 @@ populateSummaryData = function (data) {
 
         notesDataTableApi.row.add(row);
     });
+
+    var interestRatesChartData = buildChartData(interestRates, numberCompare, percentKey);
+    makeSerialChart("interestRateChart", "Interest Rate", "Number of Loans", "Interest Rates (Rounded)", "[[title]] [[category]]%: [[value]] loans", interestRatesChartData);
+
+    var loanAmountsChartData = buildChartData(loanAmounts, numberCompare, dollarKey);
+    makeSerialChart("loanAmountChart", "Loan Amount", "Number of Loans", "Loan Amounts (Rounded to $1,000)", null, loanAmountsChartData);
+
+    var gradeChartData = buildChartData(grades);
+    makeSerialChart("gradeChart", "Grade", "Number of Loans", "Grades", null, gradeChartData);
+
+    var paymentsReceivedChartData = buildChartData(paymentsReceived, numberCompare, dollarKey);
+    makeSerialChart("paymentsReceivedChart", "Dollars", "Dollars", "Payments Received (Rounded)", null, paymentsReceivedChartData);
+
+    var defaultsByGradeChartData = buildChartData(defaultsByGrade);
+    makeSerialChart("defaultsByGradeChart", "Grade", "Number of Loans", "Defaults", null, defaultsByGradeChartData);
+
+    var defaultedDollarsByGradeChartData = buildChartData(defaultedDollarsByGrade, numberCompare);
+    makeSerialChart("defaultedDollarsByGradeChart", "Grade", "Dollars", "Dollars Lost", "[[title]] [[category]]: $[[value]]", defaultedDollarsByGradeChartData);
+
+    var nextPaymentDateChartData = buildChartData(nextPaymentDates, dateCompare, dateKey);
+    makeSerialChart("nextPaymentDateChart", "Date", "Number of Loans", "Next Payment Date", null, nextPaymentDateChartData, 45, true);
+
+    var issueDateChartData = buildChartData(issueDates, dateCompare, dateKey);
+    makeSerialChart("issueDateChart", "Date", "Number of Loans", "Issue Date", null, issueDateChartData, 45, true);
+
+    var creditTrendChartData = buildChartData(creditTrends, creditTrendCompare);
+    makePieChart("creditTrendChart", creditTrendChartData);
 
     notesDataTableApi.draw();
 };
