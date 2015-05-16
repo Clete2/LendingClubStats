@@ -9,7 +9,7 @@ $(document).ready(function () {
     });
 });
 
-populateSummaryData = function (data) {
+function populateSummaryData(data) {
     var interestRates = {};
     var loanAmounts = {};
     var grades = {};
@@ -116,34 +116,41 @@ populateSummaryData = function (data) {
     makePieChart("creditTrendChart", creditTrendChartData);
 
     notesDataTableApi.draw();
-};
+}
 
-populateNotesMetadata = function (data) {
+function populateNotesMetadata(data) {
     populateInterestRateMetadata(data);
     populatePaymentsReceivedMetadata(data);
     populateAccrualMetadata(data);
-};
+    populateLoanAmountMetadata(data);
+}
 
-populateInterestRateMetadata = function (data) {
+function populateInterestRateMetadata(data) {
     var stats = determineStats(data["myNotes"], "interestRate");
     delete stats["total"];
 
     populateMetadata("InterestRate", stats, roundTwoPlaces, null, "%");
-};
+}
 
-populatePaymentsReceivedMetadata = function (data) {
+function populatePaymentsReceivedMetadata(data) {
     var stats = determineStats(data["myNotes"], "paymentsReceived");
 
     populateMetadata("Payments", stats, roundTwoPlaces, "$");
-};
+}
 
-populateAccrualMetadata = function (data) {
+function populateAccrualMetadata(data) {
     var stats = determineStats(data["myNotes"], "accruedInterest");
 
     populateMetadata("Accrual", stats, roundTwoPlaces, "$");
-};
+}
 
-populateMetadata = function (field, stats, valueFunction, prefix, suffix) {
+function populateLoanAmountMetadata(data) {
+    var stats = determineStats(data["myNotes"], "loanAmount");
+
+    populateMetadata("LoanAmount", stats, roundTwoPlaces, "$");
+}
+
+function populateMetadata(field, stats, valueFunction, prefix, suffix) {
     valueFunction = valueFunction ? valueFunction : function (value) {
         return value;
     };
@@ -152,11 +159,11 @@ populateMetadata = function (field, stats, valueFunction, prefix, suffix) {
     $.each(stats, function (key, value) {
         // Apply custom function to the value
         value = valueFunction(value);
-        $("#" + key + field).text(prefix + String(value) + suffix);
+        $("#" + key + field).text(prefix + numberWithCommas(value) + suffix);
     });
-};
+}
 
-determineStats = function (data, field) {
+function determineStats(data, field) {
     var min = Number.MAX_VALUE;
     var max = 0;
     var average = 0;
@@ -179,13 +186,13 @@ determineStats = function (data, field) {
     average = total / data.length;
 
     return {"minimum": min, "maximum": max, "average": average, "total": total};
-};
+}
 
-roundTwoPlaces = function (num) {
+function roundTwoPlaces(num) {
     return Math.round((num + 0.00001) * 100) / 100;
-};
+}
 
-buildChartData = function (dict, compareFunction, keyFunction, valueFunction) {
+function buildChartData(dict, compareFunction, keyFunction, valueFunction) {
     keyFunction = keyFunction ? keyFunction : function (key) {
         return key;
     };
@@ -213,35 +220,36 @@ buildChartData = function (dict, compareFunction, keyFunction, valueFunction) {
     });
 
     return chartData;
-};
+}
 
-dateCompare = function (a, b) {
+function dateCompare(a, b) {
     return new Date(a) - new Date(b);
-};
+}
 
-numberCompare = function (a, b) {
+function numberCompare(a, b) {
     return a - b;
-};
+}
 
 var trends = ["UP", "FLAT", "DOWN"];
-creditTrendCompare = function (a, b) {
+
+function creditTrendCompare(a, b) {
     return trends.indexOf(a) - trends.indexOf(b);
-};
+}
 
-dollarKey = function (key) {
+function dollarKey(key) {
     return "$" + key;
-};
+}
 
-percentKey = function (key) {
+function percentKey(key) {
     return key + "%";
-};
+}
 
-dateKey = function (key) {
+function dateKey(key) {
     var date = new Date(key);
     return (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
-};
+}
 
-makeSerialChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data, labelRotation, dates) {
+function makeSerialChart(chartDiv, title, valueAxisTitle, vertAxisTitle, balloonText, data, labelRotation, dates) {
     balloonText = balloonText ? balloonText : "[[title]] [[category]]: [[value]] loans";
     labelRotation = labelRotation ? labelRotation : 0;
 
@@ -285,13 +293,17 @@ makeSerialChart = function (chartDiv, title, valueAxisTitle, vertAxisTitle, ball
             "dataProvider": data
         }
     );
-};
+}
 
-makePieChart = function (chartDiv, data) {
+function makePieChart(chartDiv, data) {
     AmCharts.makeChart(chartDiv, {
         "type": "pie",
         "titleField": "category",
         "valueField": "count",
         "dataProvider": data
     });
-};
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

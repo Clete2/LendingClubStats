@@ -1,4 +1,4 @@
-clearCookies = function() {
+function clearCookies() {
     $.ajax({
         url: 'delete_cookies',
         type: 'POST'
@@ -12,7 +12,7 @@ clearCookies = function() {
 var apiVersion = "v1";
 var baseURL = "https://api.lendingclub.com/api/investor/" + apiVersion;
 
-setCookies = function () {
+function setCookies() {
     var accountNumber = $("#accountNumber").val();
     var apiKey = $("#apiKey").val();
 

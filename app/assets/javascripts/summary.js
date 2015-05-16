@@ -5,7 +5,7 @@ $(document).ready(function () {
     setTimeout(retrievePortfolioData(), 1000);
 });
 
-var retrieveSummaryData = function () {
+function retrieveSummaryData() {
     $.ajax({
         url: 'summary/retrieve_summary_data'
     }).success(function (data) {
@@ -14,18 +14,18 @@ var retrieveSummaryData = function () {
         }
         populateSummaryData(data);
     });
-};
+}
 
 var notDollar = ['totalNotes', 'totalPortfolios'];
 
-var populateSummaryData = function (data) {
+function populateSummaryData(data) {
     $.each(data, function (key, value) {
         value = notDollar.indexOf(key) >= 0 ? value : "$" + value;
-        $("#" + key).html(value);
+        $("#" + key).html(numberWithCommas(value));
     });
-};
+}
 
-var retrievePortfolioData = function () {
+function retrievePortfolioData() {
     $.ajax({
         url: 'summary/retrieve_portfolio_data'
     }).success(function (data) {
@@ -34,13 +34,13 @@ var retrievePortfolioData = function () {
         }
         populatePortfoliosData(data);
     });
-};
+}
 
-var populatePortfoliosData = function (data) {
+function populatePortfoliosData(data) {
     var tbodyHtml = "";
 
     $.each(data["myPortfolios"], function (index, row) {
-        portfolioDescription = row["portfolioDescription"] ? row["portfolioDescription"] : "";
+        var portfolioDescription = row["portfolioDescription"] ? row["portfolioDescription"] : "";
         tbodyHtml += "<tr>";
         tbodyHtml += "<td>" + row['portfolioId'] + "</td>";
         tbodyHtml += "<td>" + row['portfolioName'] + "</td>";
@@ -49,4 +49,8 @@ var populatePortfoliosData = function (data) {
     });
 
     $("#portfolio tbody").html(tbodyHtml);
-};
+}
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
